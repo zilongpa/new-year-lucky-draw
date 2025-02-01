@@ -1,0 +1,9 @@
+main {
+  width: 100vw; /* 横向填满页面 */
+  height: calc(100vw * 2 / 3); /* 根据宽度计算高度，保持 3:2 比例 */
+  max-width: calc(100vh * 3 / 2); /* 竖向填满页面时的最大宽度 */
+  max-height: 100vh; /* 竖向填满页面 */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}

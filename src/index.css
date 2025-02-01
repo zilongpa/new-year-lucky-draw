@@ -1,0 +1,52 @@
+:root {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100%;
+  margin: 0;
+  padding: 0;
+  background: rgb(183, 28, 28);
+  background: radial-gradient(
+    circle,
+    rgba(183, 28, 28, 1) 0%,
+    rgba(103, 13, 23, 1) 100%
+  );
+}
+
+html,
+body {
+  height: 100%;
+  margin: 0;
+  padding: 0;
+  overflow: hidden;
+}
+
+@font-face {
+  font-family: "Calligraphy"; /* 自定义字体名称 */
+  src: url("qiji-combo.ttf") format("truetype"); /* 字体文件路径 */
+  font-weight: lighter; /* 字体粗细 */
+  font-style: normal; /* 字体样式 */
+}
+
+body {
+  font-family: "Calligraphy", sans-serif; /* 使用自定义字体 */
+}
+
+h1 {
+  font-size: 4rem;
+  background: linear-gradient(45deg, gold, #ffd700, #ffcc00); /* 金色渐变 */
+  padding: 0.1em;
+  -webkit-background-clip: text; /* 将背景裁剪为文字形状 */
+  -webkit-text-fill-color: transparent; /* 文字颜色透明 */
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3); /* 添加阴影增强层次感 */
+}
+
+
+h2 {
+  font-size: 3rem;
+  background: linear-gradient(45deg, gold, #ffd700, #ffcc00); /* 金色渐变 */
+  padding: 0.1em;
+  -webkit-background-clip: text; /* 将背景裁剪为文字形状 */
+  -webkit-text-fill-color: transparent; /* 文字颜色透明 */
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3); /* 添加阴影增强层次感 */
+}
