@@ -15,6 +15,7 @@ function Slot({ names }: { names: string[] }) {
     if (itemRef.current) {
       // Measure the rendered pixel height:
       setItemHeight(itemRef.current.offsetHeight);
+      console.log(itemHeight);
     }
   }, []);
 
@@ -64,7 +65,7 @@ function Slot({ names }: { names: string[] }) {
       <div
         style={{
           overflow: 'hidden',
-          width: '200px',
+          width: '300px',
           height: `${itemHeight}px`,
           margin: '0 auto',
           position: 'relative',
@@ -88,9 +89,10 @@ function Slot({ names }: { names: string[] }) {
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center',
+                lineHeight: '3.5rem',
               }}
             >
-              <h3>{name}</h3>
+              <h2>{name}</h2>
             </div>
           ))}
         </motion.div>

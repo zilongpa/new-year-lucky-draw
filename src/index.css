@@ -52,7 +52,7 @@ h2 {
 }
 
 h3 {
-  font-size: 1.5rem;
+  font-size: 2rem;
   background: linear-gradient(45deg, gold, #ffd700, #ffcc00); /* 金色渐变 */
   padding: 0.1em;
   -webkit-background-clip: text; /* 将背景裁剪为文字形状 */
