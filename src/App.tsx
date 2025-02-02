@@ -3,194 +3,132 @@ import background from "/background.svg";
 import "./App.css";
 
 import * as motion from "motion/react-client";
-import type { Variants } from "motion/react";
+import { useEffect, useRef, useState } from "react";
 
-const cardContainer: React.CSSProperties = {
-    overflow: "hidden",
-    display: "flex",
-    justifyContent: "center",
-    alignItems: "center",
-    position: "relative",
-    paddingTop: 20,
-    marginBottom: -120,
-}
+function Slot({ names }: { names: string[] }) {
+  const REPEAT_COUNT = 4; // How many times we repeat the list to allow for a longer "spin"
 
-const card: React.CSSProperties = {
-    fontSize: 32,
-    width: 300,
-    height: 430,
-    display: "flex",
-    justifyContent: "center",
-    alignItems: "center",
-    transformOrigin: "10% 60%",
-}
+  const [itemHeight, setItemHeight] = useState(0);
+  const itemRef = useRef<HTMLDivElement | null>(null);
 
-const cardVariants: Variants = {
-    offscreen: {
-        y: 300,
-    },
-    onscreen: {
-        y: 50,
-        rotate: -10,
-        transition: {
-            type: "spring",
-            bounce: 0.4,
-            duration: 0.8,
-        },
-    },
-}
+  useEffect(() => {
+    if (itemRef.current) {
+      // Measure the rendered pixel height:
+      setItemHeight(itemRef.current.offsetHeight);
+    }
+  }, []);
 
-function Line({ i }: { i: string }) {
-    return (
+  // Repeated list for spinning effect
+  const repeatedNames = Array(REPEAT_COUNT).fill(names).flat();
+
+  // State to store the random "target" index for the spin
+  const [targetIndex, setTargetIndex] = useState(0);
+  // State to trigger re-renders for the spin
+  const [spinning, setSpinning] = useState(false);
+
+  // Ref to keep track of the spin count to force a re-animation
+  const spinCountRef = useRef(0);
+
+  // A function to handle the spin logic
+  const handleSpin = () => {
+    setSpinning(true);
+
+    // Increase spin count to force a re-run of the animation with a key
+    spinCountRef.current += 1;
+
+    // Choose a random name from the array
+    const randomNameIndex = Math.floor(Math.random() * names.length);
+
+    // We want the reel to land on the random name somewhere in the *middle* of the repeated list
+    // so that we have enough items above to simulate spinning. 
+    // For simplicity, pick an offset somewhere in the second repetition:
+    const startOfSecondRepetition = names.length; // index offset for second repetition start
+    const chosenIndex = startOfSecondRepetition + randomNameIndex;
+
+    setTargetIndex(chosenIndex);
+  };
+
+  // The final y offset: we move the reel up so that the target name is in the "visible" slot
+  const finalY = -(targetIndex * itemHeight);
+
+  return (
+    <div style={{ textAlign: 'center', top: "2vw" }}>
+      {/* This div is used only to measure the height of one line */}
+      <div 
+        ref={itemRef} 
+        style={{ visibility: "hidden", pointerEvents: "none", whiteSpace: "nowrap" }}
+      >
+        <h2>{names[0]}</h2>
+      </div>
+
+      <div
+        style={{
+          overflow: 'hidden',
+          width: '200px',
+          height: `${itemHeight}px`,
+          margin: '0 auto',
+          position: 'relative',
+        }}
+      >
         <motion.div
-            className={`line-${i}`}
-            style={cardContainer}
-            // initial="offscreen"
-            // whileInView="onscreen"
-            // viewport={{ am ount: 0.8 }}
+          key={spinCountRef.current} // Changing key forces the animation to re-trigger
+          animate={{ y: finalY }}
+          initial={{ y: 0 }}
+          transition={{
+            duration: 2,    // total spin duration
+            ease: 'easeInOut',
+          }}
+          onAnimationComplete={() => setSpinning(false)}
         >
-            <div />
-            <motion.div style={card} variants={cardVariants} className="card">
-                {i}
-            </motion.div>
+          {repeatedNames.map((name, idx) => (
+            <div
+              key={`${name}-${idx}`}
+              style={{
+                height: itemHeight,
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+              }}
+            >
+              <h3>{name}</h3>
+            </div>
+          ))}
         </motion.div>
-    )
+      </div>
+
+      <button
+        onClick={handleSpin}
+        disabled={spinning}
+        style={{ 
+          background: 'none',
+          border: 'none',
+          cursor: 'pointer',
+          marginTop: 0,
+        }}
+      >
+        <h3 style={{marginTop: 0,}}>抽奖！</h3>
+      </button>
+    </div>
+  );
 }
 
 function App() {
   const names = [
     "jonnyjonny",
     "Gege",
-    "Michael",
-    "Not Michael",
-    "Michael the Third",
+    "万里",
+    "有鸽",
+    "无鸽",
   ];
 
   return (
-    <main style={{backgroundImage: `url(${background})`}}>
-      <h1 style={{position: "fixed", fontSize: "5vw"}}>新春嘉年华</h1>
-      <h2 style={{position: "fixed", fontSize: "5vw", top: "14vw"}}>二等奖</h2>
- 
-      {/* TODO: Fix outer div size and do hide overflow */}
-      <div> 
-        {names.map((n) => (
-          <Line i={n} />
-        ))}
-      </div>
+    <main style={{ backgroundImage: `url(${background})` }}>
+      <h1 style={{ position: "fixed", fontSize: "5vw", top: "14vw"}}>新春嘉年华</h1>
+      <h2 style={{ position: "fixed", fontSize: "5vw", top: "19vw" }}>二等奖</h2>
+
+      <Slot names={names} />
     </main>
   );
 }
 
 export default App;
-
-// export default function ScrollTriggered() {
-//     return (
-//         <div style={container}>
-//             {food.map(([emoji, hueA, hueB], i) => (
-//                 <Card i={i} emoji={emoji} hueA={hueA} hueB={hueB} key={emoji} />
-//             ))}
-//         </div>
-//     )
-// }
-
-// interface CardProps {
-//     emoji: string
-//     hueA: number
-//     hueB: number
-//     i: number
-// }
-
-// function Card({ emoji, hueA, hueB, i }: CardProps) {
-//     const background = `linear-gradient(306deg, ${hue(hueA)}, ${hue(hueB)})`
-
-//     return (
-//         <motion.div
-//             className={`card-container-${i}`}
-//             style={cardContainer}
-//             initial="offscreen"
-//             whileInView="onscreen"
-//             viewport={{ am ount: 0.8 }}
-//         >
-//             <div style={{ ...splash, background }} />
-//             <motion.div style={card} variants={cardVariants} className="card">
-//                 {emoji}
-//             </motion.div>
-//         </motion.div>
-//     )
-// }
-
-// const cardVariants: Variants = {
-//     offscreen: {
-//         y: 300,
-//     },
-//     onscreen: {
-//         y: 50,
-//         rotate: -10,
-//         transition: {
-//             type: "spring",
-//             bounce: 0.4,
-//             duration: 0.8,
-//         },
-//     },
-// }
-
-// const hue = (h: number) => `hsl(${h}, 100%, 50%)`
-
-// /**
-//  * ==============   Styles   ================
-//  */
-
-// const container: React.CSSProperties = {
-//     margin: "100px auto",
-//     maxWidth: 500,
-//     paddingBottom: 100,
-//     width: "100%",
-// }
-
-// const cardContainer: React.CSSProperties = {
-//     overflow: "hidden",
-//     display: "flex",
-//     justifyContent: "center",
-//     alignItems: "center",
-//     position: "relative",
-//     paddingTop: 20,
-//     marginBottom: -120,
-// }
-
-// const splash: React.CSSProperties = {
-//     position: "absolute",
-//     top: 0,
-//     left: 0,
-//     right: 0,
-//     bottom: 0,
-//     clipPath: `path("M 0 303.5 C 0 292.454 8.995 285.101 20 283.5 L 460 219.5 C 470.085 218.033 480 228.454 480 239.5 L 500 430 C 500 441.046 491.046 450 480 450 L 20 450 C 8.954 450 0 441.046 0 430 Z")`,
-// }
-
-// const card: React.CSSProperties = {
-//     fontSize: 164,
-//     width: 300,
-//     height: 430,
-//     display: "flex",
-//     justifyContent: "center",
-//     alignItems: "center",
-//     borderRadius: 20,
-//     background: "#f5f5f5",
-//     boxShadow:
-//         "0 0 1px hsl(0deg 0% 0% / 0.075), 0 0 2px hsl(0deg 0% 0% / 0.075), 0 0 4px hsl(0deg 0% 0% / 0.075), 0 0 8px hsl(0deg 0% 0% / 0.075), 0 0 16px hsl(0deg 0% 0% / 0.075)",
-//     transformOrigin: "10% 60%",
-// }
-
-// /**
-//  * ==============   Data   ================
-//  */
-
-// const food: [string, number, number][] = [
-//     ["🍅", 340, 10],
-//     ["🍊", 20, 40],
-//     ["🍋", 60, 90],
-//     ["🍐", 80, 120],
-//     ["🍏", 100, 140],
-//     ["🫐", 205, 245],
-//     ["🍆", 260, 290],
-//     ["🍇", 290, 320],
-// ]

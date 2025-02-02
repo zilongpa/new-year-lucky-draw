@@ -50,3 +50,12 @@ h2 {
   -webkit-text-fill-color: transparent; /* 文字颜色透明 */
   text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3); /* 添加阴影增强层次感 */
 }
+
+h3 {
+  font-size: 1.5rem;
+  background: linear-gradient(45deg, gold, #ffd700, #ffcc00); /* 金色渐变 */
+  padding: 0.1em;
+  -webkit-background-clip: text; /* 将背景裁剪为文字形状 */
+  -webkit-text-fill-color: transparent; /* 文字颜色透明 */
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3); /* 添加阴影增强层次感 */
+}
