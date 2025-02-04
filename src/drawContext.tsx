@@ -7,11 +7,13 @@ interface DrawContextType {
     participants: string[];
     spinning: boolean;
     currentIndex: number;
+    itemHeight: number;
     setTitle: Dispatch<SetStateAction<string>>;
     setSubtitle: Dispatch<SetStateAction<string>>;
     setParticipants: Dispatch<SetStateAction<string[]>>;
     setSpinning: Dispatch<SetStateAction<boolean>>;
     setCurrentIndex: Dispatch<SetStateAction<number>>;
+    setItemHeight: Dispatch<SetStateAction<number>>;
 }
 
 function getStoredValue(arg0: string, arg1: string): string {
@@ -37,11 +39,13 @@ export const DrawContext = createContext<DrawContextType>({
     participants: ["原神", "崩坏星穹铁道", "绝区零"],
     spinning: false,
     currentIndex: 0,
+    itemHeight: 0,
     setTitle: () => { },
     setSubtitle: () => { },
     setParticipants: () => { },
     setSpinning: () => { },
     setCurrentIndex: () => { },
+    setItemHeight: () => { },
 });
 
 export const DrawProvider = ({ children }: { children: any }) => {
@@ -50,6 +54,7 @@ export const DrawProvider = ({ children }: { children: any }) => {
     const [participants, setParticipants] = useState(() => getStoredValues("participants", ["原神", "崩坏星穹铁道", "绝区零"]));
     const [spinning, setSpinning] = useState(false);
     const [currentIndex, setCurrentIndex] = useState(() => Number(getStoredValue("currentIndex", "0")));
+    const [itemHeight, setItemHeight] = useState(() => Number(getStoredValue("itemHeight", "0")));
 
     // 同步状态到 localStorage
     useEffect(() => {
@@ -68,6 +73,10 @@ export const DrawProvider = ({ children }: { children: any }) => {
       localStorage.setItem("currentIndex", String(currentIndex));
   }, [currentIndex]);
 
+  useEffect(() => {
+    localStorage.setItem("itemHeight", String(itemHeight));
+}, [itemHeight]);
+
     return (
         <DrawContext.Provider value={{
             title, setTitle,
@@ -75,6 +84,7 @@ export const DrawProvider = ({ children }: { children: any }) => {
             participants, setParticipants,
             spinning, setSpinning,
             currentIndex, setCurrentIndex,
+            itemHeight, setItemHeight
         }}>
             {children}
         </DrawContext.Provider>
