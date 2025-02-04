@@ -4,17 +4,25 @@ import "./App.css";
 
 import * as motion from "motion/react-client";
 import { useEffect, useRef, useState } from "react";
+import { AnimatePresence } from "motion/react";
 
 function Slot({ names }: { names: string[] }) {
   const REPEAT_COUNT = 4; // How many times we repeat the list to allow for a longer "spin"
 
-  const [itemHeight, setItemHeight] = useState(0);
+  let i = 0
+  let ii = localStorage.getItem("itemHeight")
+  if (ii) {
+    i = parseInt(ii)
+  }
+
+  const [itemHeight, setItemHeight] = useState(i);
   const itemRef = useRef<HTMLDivElement | null>(null);
 
   useEffect(() => {
     if (itemRef.current) {
       // Measure the rendered pixel height:
       setItemHeight(itemRef.current.offsetHeight);
+      localStorage.setItem("itemHeight",itemRef.current.offsetHeight.toString())
     }
   }, []);
 
@@ -22,7 +30,13 @@ function Slot({ names }: { names: string[] }) {
   const repeatedNames = Array(REPEAT_COUNT).fill(names).flat();
 
   // State to store the random "target" index for the spin
-  const [targetIndex, setTargetIndex] = useState(0);
+  let last = 0
+  let l = localStorage.getItem("last")
+  if (l) {
+    last = parseInt(l)
+  }
+  const [lastIndex, setLastIndex] = useState(last);
+  const [targetIndex, setTargetIndex] = useState(last);
   // State to trigger re-renders for the spin
   const [spinning, setSpinning] = useState(false);
 
@@ -44,12 +58,17 @@ function Slot({ names }: { names: string[] }) {
     // For simplicity, pick an offset somewhere in the second repetition:
     const startOfSecondRepetition = names.length; // index offset for second repetition start
     const chosenIndex = startOfSecondRepetition + randomNameIndex;
-
+    
+    setLastIndex(targetIndex);
     setTargetIndex(chosenIndex);
+    localStorage.setItem("last",chosenIndex.toString())
   };
 
   // The final y offset: we move the reel up so that the target name is in the "visible" slot
+  const initialY = -(lastIndex * itemHeight);
   const finalY = -(targetIndex * itemHeight);
+
+  console.log(initialY, finalY)
 
   return (
     <div style={{ textAlign: 'center', top: "2vw" }}>
@@ -62,6 +81,7 @@ function Slot({ names }: { names: string[] }) {
       </div>
 
       <div
+      className="mask-of-winner"
         style={{
           overflow: 'hidden',
           width: '300px',
@@ -73,9 +93,9 @@ function Slot({ names }: { names: string[] }) {
         <motion.div
           key={spinCountRef.current} // Changing key forces the animation to re-trigger
           animate={{ y: finalY }}
-          initial={{ y: 0 }}
+          initial={{ y: initialY }}
           transition={{
-            duration: 2,    // total spin duration
+            duration: names.length/50,    // total spin duration
             ease: 'easeInOut',
           }}
           onAnimationComplete={() => setSpinning(false)}
@@ -100,47 +120,57 @@ function Slot({ names }: { names: string[] }) {
       <button
         onClick={handleSpin}
         disabled={spinning}
-        style={{
-          background: 'none',
-          border: 'none',
-          cursor: 'pointer',
-          marginTop: 0,
-        }}
+        style={{ marginTop: 0 }}
       >
-        <h3 style={{ marginTop: 0, }}>抽奖！</h3>
+        <p style={{ marginTop: 0, }}>抽奖</p>
       </button>
     </div>
   );
 }
 
 function App() {
-  const [names, setNames] = useState([
-    "jonnyjonny",
-    "Gege",
-    "万里",
-    "有鸽",
-    "无鸽",
-  ]);
+  // [
+  //   "jonnyjonny",
+  //   "Gege",
+  //   "万里",
+  //   "有鸽",
+  //   "无鸽",
+  // ]
+  // let a = [
+  //   "jonnyjonny",
+  //   "Gege",
+  //   "万里",
+  //   "有鸽",
+  //   "无鸽",
+  // ]
+  let a = new Array(300);
+  a.fill(Math.random()*10000,0,300)
+  const [names, setNames] = useState(a);
+  const stageTitles = [
+    '三等奖',
+    '二等奖',
+    '一等奖',
+  ];
+  const [stageIndex, setStageIndex] = useState(0);
 
   const [showEditor, setShowEditor] = useState(false); // controls editor visibility
   const [nameListInput, setNameListInput] = useState(''); // text area content
 
   return (
     <main style={{ backgroundImage: `url(${background})` }}>
+       <h1 style={{ position: "fixed", fontSize: "5vw", top: "10vw" }}>新春嘉年华</h1>
       <button
         style={{
           position: 'absolute',
           top: 10,
           left: 10,
-          background: 'none',
-          border: '0',
-          padding: '5px 8px',
-          cursor: 'pointer',
         }}
         onClick={() => setShowEditor(true)}
       >
         输入名单
       </button>
+
+      {/* 抽奖名单editor */}
       {showEditor && (
         <div
           style={{
@@ -187,8 +217,47 @@ function App() {
         </div>
       )}
 
+      {/* 调整抽奖键 */}
+      <div
+        style={{
+          position: 'absolute',
+          top: 40,
+          left: 0,
+          display: 'flex',
+          gap: '5px',
+        }}
+      >
+        <button
+          onClick={() =>
+            setStageIndex((prev) => (prev - 1 + stageTitles.length) % stageTitles.length)
+          }
+        >
+          &larr;
+        </button>
+        <span>调整抽奖</span>
+        <button onClick={() =>
+          setStageIndex((prev) => (prev + 1) % stageTitles.length)
+        }
+        >
+          &rarr;
+        </button>
+      </div>
+
+      {/* Main content */}
       <h1 style={{ position: "fixed", fontSize: "5vw", top: "10vw" }}>新春嘉年华</h1>
-      <h2 style={{ position: "fixed", fontSize: "5vw", top: "14vw" }}>二等奖</h2>
+      
+      <AnimatePresence mode="wait">
+        <motion.h3
+          style={{ position: "fixed", top: "16vw", fontSize: "4vw" }}
+          key={stageIndex}
+          initial={{ x: '100%', opacity: 0 }}    // start off right side
+          animate={{ x: 0, opacity: 1 }}      // slide to center
+          exit={{ x: '-100%', opacity: 0 }}      // exit to left side
+          transition={{ duration: 1 }}      // tweak duration for speed
+        >
+          {stageTitles[stageIndex]}
+        </motion.h3>
+      </AnimatePresence>
 
       <Slot names={names} />
     </main>

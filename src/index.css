@@ -23,7 +23,7 @@ body {
 
 @font-face {
   font-family: "Calligraphy"; /* 自定义字体名称 */
-  src: url("qiji-combo.ttf") format("truetype"); /* 字体文件路径 */
+  src: url("qiji-combo.ttf") format("truetype");
   font-weight: lighter; /* 字体粗细 */
   font-style: normal; /* 字体样式 */
 }
@@ -33,8 +33,8 @@ body {
 }
 
 h1 {
-  font-size: 4rem;
-  background: linear-gradient(45deg, gold, #ffd700, #ffcc00); /* 金色渐变 */
+  font-size: 4em;
+  background: linear-gradient(45deg, #f8d790, hsl(51, 100%, 67%), #ffd325); /* 金色渐变 */
   padding: 0.1em;
   -webkit-background-clip: text; /* 将背景裁剪为文字形状 */
   -webkit-text-fill-color: transparent; /* 文字颜色透明 */
@@ -45,17 +45,30 @@ h1 {
 h2 {
   font-size: 3rem;
   background: linear-gradient(45deg, gold, #ffd700, #ffcc00); /* 金色渐变 */
-  padding: 0.1em;
   -webkit-background-clip: text; /* 将背景裁剪为文字形状 */
   -webkit-text-fill-color: transparent; /* 文字颜色透明 */
   text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3); /* 添加阴影增强层次感 */
 }
 
 h3 {
-  font-size: 2rem;
+  font-size: 1.2rem;
   background: linear-gradient(45deg, gold, #ffd700, #ffcc00); /* 金色渐变 */
-  padding: 0.1em;
+  /* padding: 0.1em; */
   -webkit-background-clip: text; /* 将背景裁剪为文字形状 */
   -webkit-text-fill-color: transparent; /* 文字颜色透明 */
   text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3); /* 添加阴影增强层次感 */
+}
+
+button {
+  background: none;
+  border: 0;
+  padding: '5px 8px';
+  cursor: pointer;
+}
+
+.mask-of-winner {
+  border-radius: 12px;
+  background: #8b1319;
+  box-shadow: inset 13px 13px 26px #5d0d11,
+              inset -13px -13px 26px #b91921;
 }
