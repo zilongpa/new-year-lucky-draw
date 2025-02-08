@@ -63,6 +63,7 @@ export default function Header() {
                   .filter(Boolean);
                 if (arr.length > 0) {
                   setParticipants(arr)
+                  setCurrentIndex(0);
                 }
               }}
             />
@@ -92,8 +93,8 @@ export default function Header() {
             // We want the reel to land on the random name somewhere in the *middle* of the repeated list
             // so that we have enough items above to simulate spinning. 
             // For simplicity, pick an offset somewhere in the second repetition:
-            const startOfSecondRepetition = participants.length; // index offset for second repetition start
-            const chosenIndex = startOfSecondRepetition + randomNameIndex;
+            // const startOfSecondRepetition = participants.length; // index offset for second repetition start
+            const chosenIndex = randomNameIndex;
             setCurrentIndex(chosenIndex)
           }}
           style={{ marginTop: 0 }}

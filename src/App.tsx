@@ -32,11 +32,14 @@ function Slot({ names }: { names: string[] }) {
   //   setCurrentIndex(participants.length - 1)
   // }
 
-  let animationParticipants = participants;
-  let animationCurrentIndex = currentIndex - 2 * participants.length;
+  
 
-  if (participants.length < 128) {
-    for (let i = 0; i <= Math.round(256 / participants.length); i++) {
+  let animationParticipants = participants;
+  let animationCurrentIndex = currentIndex;
+  
+
+  if (participants.length < 999) {
+    for (let i = 0; i <= Math.round(999 / participants.length); i++) {
       animationParticipants = animationParticipants.concat(participants);
       animationCurrentIndex += participants.length;
     }
@@ -70,8 +73,8 @@ function Slot({ names }: { names: string[] }) {
         initial={{ y: initialY }}
         // style={{ position: 'absolute' }}
         transition={{
-          duration: names.length / 1.5, // total spin duration
-          bounce: 0.1,
+          duration: 4, // total spin duration
+          bounce: 0.05,
           type: "spring", //stiffness: 349, damping: 56, mass: 4.9
         }}
       >
